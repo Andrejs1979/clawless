@@ -3,6 +3,18 @@ main = "src/index.ts"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Local Development Setup
+# ========================
+# This project is configured for local development using:
+# - D1: Local SQLite database (--local flag)
+# - KV: In-memory cache (--local flag)
+# - R2: Local mock storage (--local flag)
+#
+# For production deployment:
+# 1. Set your account_id below or via CLOUDFLARE_ACCOUNT_ID env var
+# 2. Create real resources with `wrangler d1 create`, `wrangler kv create`, etc.
+# 3. Update the *_id fields below with the actual resource IDs
+#
 # Account ID (set via environment variable or replace with your account ID)
 # account_id = ""
 

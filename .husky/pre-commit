@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+if [ -z "$SKIP_HUSKY" ]; then
+  npx lint-staged
+fi
