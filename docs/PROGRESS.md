@@ -1,8 +1,10 @@
 # Progress Tracker
 
 **Current Sprint:** Sprint 0 - Foundation & Setup
-**Status:** Planning Phase
-**Last Updated:** 2025-02-08
+**Status:** In Progress
+**Last Updated:** 2025-02-09
+
+**📋 See [SPRINTS.md](./SPRINTS.md) for complete sprint plans**
 
 ---
 
@@ -85,20 +87,24 @@
 
 | Milestone | Target Date | Status |
 |-----------|-------------|--------|
-| M1: Planning Complete | Week 1 | In Progress |
-| M2: MVP Foundation | Week 2 | Not Started |
-| M3: First Working Assistant | Week 3 | Not Started |
-| M4: Multi-Tenancy | Week 4 | Not Started |
-| M5: Public Beta | Week 8 | Not Started |
+| M1: Sprint 0 Complete (Foundation) | Week 1 | In Progress |
+| M2: Sprint 1 Complete (Core Runtime) | Week 2 | Not Started |
+| M3: Sprint 2 Complete (Tenant Management) | Week 3 | Not Started |
+| M4: Sprint 3 Complete (API Channel) | Week 4 | Not Started |
+| M5: Sprint 4 Complete (WebChat Widget) | Week 5 | Not Started |
+| M6: Sprint 5 Complete (Polish & Launch) | Week 6 | Not Started |
+| M7: Public Beta Launch | Week 7 | Not Started |
 
 ---
 
 ## Recent Activity
 
 ```
+2025-02-09  - Created SPRINTS.md (6-week MVP plan)
+2025-02-09  - Added Workers AI hybrid strategy to architecture
+2025-02-09  - Finalized pricing model
 2025-02-08  - Created PRD.md
 2025-02-08  - Initialized repository
-2025-02-08  - Created INFRASTRUCTURE.md
 ```
 
 ---
@@ -115,6 +121,9 @@
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2025-02-09 | 6-week MVP timeline | Agile sprints, iterative delivery |
+| 2025-02-09 | Hybrid LLM strategy | Workers AI (cost) + Anthropic (quality) |
+| 2025-02-09 | Tiered subscription pricing | B2B SaaS standard, predictable revenue |
 | 2025-02-08 | Cloudflare Workers platform | Serverless, global edge, auto-scaling |
 | 2025-02-08 | Multi-tenant architecture | B2B SaaS focus |
 | 2025-02-08 | TypeScript throughout | Type safety, developer experience |
