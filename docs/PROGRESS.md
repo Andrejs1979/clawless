@@ -11,12 +11,19 @@
 ### 🔄 In Progress
 | Task | Owner | Status | Notes |
 |------|-------|--------|-------|
-| Create planning documents | - | Active | PRD, Epics, Architecture |
+| Set up project structure | - | Not Started | TypeScript config, ESLint, Prettier |
+
+### ✅ Completed
+| Task | Date | Notes |
+|------|------|-------|
+| Create planning documents | 2025-02-08 | PRD, Epics, Architecture created |
+| Finalize architecture decisions | 2025-02-09 | Model routing, session storage, data retention, custom domains |
+| Define pricing model | 2025-02-09 | Tiered subscriptions + LLM pass-through |
+| Add Workers AI integration | 2025-02-09 | Hybrid strategy: Workers AI (default) + Anthropic/OpenAI (premium) |
 
 ### 📋 Todo (This Sprint)
 | Task | Priority | Estimate |
 |------|----------|----------|
-| Finalize architecture decisions | High | 2h |
 | Set up project structure | High | 1h |
 | Configure Cloudflare Workers | High | 2h |
 | Set up D1 database schema | High | 2h |

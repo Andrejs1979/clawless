@@ -117,6 +117,7 @@ Existing solutions require:
 - **Storage:** Cloudflare D1 (SQLite), KV, R2
 - **API:** REST with WebSocket support
 - **Auth:** JWT-based tenant authentication
+- **LLM:** Workers AI (primary) + Anthropic/OpenAI (premium routing)
 
 ### Performance
 - Cold start < 100ms
@@ -140,21 +141,41 @@ Existing solutions require:
 - p95 latency < 1s
 - Zero tenant data leakage
 - Auto-scale to 10K concurrent tenants
+- **90%+ queries on Workers AI** (cost optimization goal)
 
 ### Business
 - Time to onboard: < 5 minutes
-- Cost per 1K messages: <$1 (LLM costs excluded)
+- Cost per 1K messages: <$0.20 with Workers AI (vs ~$1-3 with premium LLMs)
 - Tenant churn: < 5% monthly
 - API success rate: > 99.5%
 
 ---
 
-## Open Questions
+## Pricing Model
 
-1. **Model Routing** - Should tenants choose models, or do we route based on query?
-2. **Pricing Model** - Per-message, per-token, or tiered subscriptions?
-3. **Data Retention** - How long to store conversation history?
-4. **Custom Domains** - Support for tenant-branded domains?
+### Tiered Subscriptions + LLM Pass-Through
+
+| Tier | Price | Messages/Month | Included Tokens | Overages |
+|------|-------|----------------|-----------------|----------|
+| **Starter** | $29/mo | 1,000 | 100K input tokens | $0.03/message |
+| **Pro** | $99/mo | 10,000 | 1M input tokens | $0.02/message |
+| **Business** | $299/mo | 50,000 | 5M input tokens | $0.01/message |
+| **Enterprise** | Custom | Unlimited | Custom | Custom |
+
+### LLM Cost Structure
+- Platform fee covers infrastructure, support, margin
+- **Workers AI:** ~$0.0005 per message (default, 90%+ of queries)
+- **Premium LLMs:** ~$0.01-0.05 per message (complex tasks, Enterprise)
+- Costs passed through at actual cost (transparent billing)
+- Separate line items on invoices for clarity
+
+**Estimated LLM costs per 1K messages:**
+- Starter/Pro tier (Workers AI): ~$0.50
+- Business tier (mixed): ~$1-2
+- Enterprise tier (premium heavy): ~$5-10
+
+### Trial
+- 14-day free trial on all tiers (no credit card required)
 
 ---
 

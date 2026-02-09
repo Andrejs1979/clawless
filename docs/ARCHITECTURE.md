@@ -202,13 +202,37 @@ CREATE INDEX idx_tool_executions_session ON tool_executions(session_id);
 
 ## LLM Integration
 
+### Hybrid Strategy: Workers AI + Premium Providers
+
+**Cost-optimized approach:** Default to Workers AI for most queries, route to Anthropic/OpenAI for complex tasks requiring top-tier models.
+
 ### Supported Providers
-| Provider | Models | Status |
-|----------|--------|--------|
-| Anthropic | Claude Opus 4.6, Sonnet 4.5, Haiku | MVP |
-| OpenAI | GPT-4o, GPT-4o-mini | MVP |
-| Google | Gemini 2.0 (Flash/Pro) | Post-MVP |
-| Others | Via compatible APIs | Future |
+
+| Provider | Models | Input Cost | Output Cost | Use Case |
+|----------|--------|------------|-------------|----------|
+| **Workers AI** | Llama 3.1 8B fast | $0.045/M | $0.384/M | Simple queries, default |
+| **Workers AI** | Llama 3.1 8B awq | $0.123/M | $0.266/M | Balanced quality/speed |
+| **Workers AI** | Llama 3.3 70B | $0.293/M | $2.253/M | Complex reasoning |
+| **Workers AI** | Gemma 3 12B | $0.345/M | $0.556/M | Multilingual |
+| **Anthropic** | Claude Haiku | $0.80/M | $1.00/M | High quality simple |
+| **Anthropic** | Claude Sonnet 4.5 | $3.00/M | $15.00/M | Complex, code |
+| **Anthropic** | Claude Opus 4.6 | $15.00/M | $75.00/M | Deepest reasoning |
+| **OpenAI** | GPT-4o-mini | $0.15/M | $0.60/M | Fast quality |
+| **OpenAI** | GPT-4o | $2.50/M | $10.00/M | Vision tasks |
+
+### Cost Comparison
+
+| Task | Workers AI (Llama 8B) | Anthropic (Haiku) | Anthropic (Sonnet) | Savings |
+|------|----------------------|-------------------|-------------------|---------|
+| Simple query | ~$0.0005 | ~$0.002 | ~$0.01 | **4-20x cheaper** |
+| Code generation | ~$0.001 | ~$0.003 | ~$0.02 | **3-20x cheaper** |
+| Complex reasoning | ~$0.005 | ~$0.01 | ~$0.05 | **2-10x cheaper** |
+
+**Estimated monthly savings for 1M messages:**
+- Workers AI only: ~$500-1,000 (LLM costs)
+- Anthropic Haiku only: ~$2,000-4,000
+- Anthropic Sonnet only: ~$10,000-20,000
+- **Hybrid approach: ~$1,000-3,000** (60-90% savings vs premium-only)
 
 ### LLM Client Interface
 ```typescript
@@ -421,9 +445,166 @@ logger.info("chat_completion", {
 
 ---
 
-## Open Questions
+## Architecture Decisions Record
 
-1. **Multi-region deployment:** Should D1 be replicated across regions?
-2. **Session storage:** KV vs D1 for hot session data?
-3. **Websocket limits:** Cloudflare Workers have connection limits
-4. **Custom domains:** Support tenant-branded domains?
+| ID | Decision | Date | Rationale |
+|----|----------|------|-----------|
+| ADR-001 | LLM Strategy: Workers AI + Premium hybrid | 2025-02-09 | Default to Workers AI (5-20x cheaper). Route complex queries to Anthropic/OpenAI for premium tenants. Optimizes cost while maintaining quality. |
+| ADR-002 | Session Storage: KV cache + D1 | 2025-02-09 | Active sessions cached in KV for fast reads, persisted in D1. Cache TTL: 5 minutes. Balances performance with data durability. |
+| ADR-003 | Data Retention: 30 days default | 2025-02-09 | Conversations retained 30 days default. Tenants can extend with paid tiers. Balances cost with compliance/debugging needs. |
+| ADR-004 | Custom Domains: Post-MVP | 2025-02-09 | Use api.clawless.dev for MVP. Custom domains require TLS provisioning, DNS validation, Let's Encrypt integration. Defer to post-MVP. |
+| ADR-005 | Multi-region: Single region for MVP | 2025-02-09 | D1 doesn't support multi-region replication yet. Deploy to primary region (US-East) for MVP. Re-evaluate when Cloudflare adds support. |
+| ADR-006 | Websockets: Use SSE for MVP | 2025-02-09 | Cloudflare Workers have websocket limits and connection restrictions. Server-Sent Events (SSE) sufficient for streaming responses. Consider websockets for bidirectional in future. |
+
+---
+
+## Model Routing Strategy
+
+### Hybrid Smart Routing
+
+```typescript
+interface RouteDecision {
+  provider: 'workers' | 'anthropic' | 'openai';
+  model: string;
+  reasoning: string;
+}
+
+function selectModel(query: string, context: SessionContext): RouteDecision {
+  // Simple queries → Workers AI Llama 8B (cheapest)
+  if (isSimpleQuery(query)) {
+    return {
+      provider: 'workers',
+      model: '@cf/meta/llama-3.1-8b-instruct-fp8-fast',
+      reasoning: 'simple_query_workers_ai'
+    };
+  }
+
+  // Code tasks → Workers AI Llama 8B awq or Anthropic Haiku
+  if (context.hasCodeBlocks || query.includes('code')) {
+    if (context.tier === 'enterprise') {
+      return {
+        provider: 'anthropic',
+        model: 'claude-sonnet-4.5',
+        reasoning: 'code_task_premium'
+      };
+    }
+    return {
+      provider: 'workers',
+      model: '@cf/meta/llama-3.1-8b-instruct-awq',
+      reasoning: 'code_task_workers_ai'
+    };
+  }
+
+  // Complex reasoning → Anthropic Sonnet/Opus or Workers AI 70B
+  if (isComplexQuery(query) || context.requiresDeepAnalysis) {
+    if (context.tier === 'enterprise' || context.tier === 'business') {
+      return {
+        provider: 'anthropic',
+        model: 'claude-sonnet-4.5',
+        reasoning: 'complex_reasoning_premium'
+      };
+    }
+    return {
+      provider: 'workers',
+      model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+      reasoning: 'complex_reasoning_workers_ai'
+    };
+  }
+
+  // Default to Workers AI for cost efficiency
+  return {
+    provider: 'workers',
+    model: '@cf/meta/llama-3.1-8b-instruct-fp8-fast',
+    reasoning: 'default_workers_ai'
+  };
+}
+```
+
+### Query Classification Heuristics
+
+| Query Type | Indicators | Default Model | Premium Override |
+|------------|------------|---------------|------------------|
+| Simple | < 100 chars, single question, no context | Llama 8B fast | - |
+| Code | Contains code blocks, "write code", "debug" | Llama 8B awq | Sonnet (Enterprise) |
+| Complex | Multi-step, "analyze", "compare", strategic | Llama 70B | Sonnet/Opus (Business+) |
+| Vision | Images, "describe this image" | GPT-4o | - |
+| Default | Everything else | Llama 8B fast | - |
+
+### Tenant Override
+
+Tenants can override routing by specifying `provider` and `model`:
+```json
+{
+  "messages": [...],
+  "provider": "anthropic",
+  "model": "claude-opus-4.6"
+}
+```
+
+### Workers AI Integration Benefits
+
+| Benefit | Description |
+|---------|-------------|
+| **Cost** | 5-20x cheaper than Anthropic/OpenAI |
+| **Latency** | Already on Cloudflare edge, no external API calls |
+| **Reliability** | Same infrastructure as Workers, fewer failure points |
+| **Simplicity** | Single platform billing, no separate API keys needed |
+
+---
+
+## Session Storage Strategy
+
+### Two-Tier Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Request Flow                          │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  1. Check KV cache (fast path)                          │
+│     └─ Hit? Return cached session                       │
+│                                                         │
+│  2. Miss? Query D1 (slow path)                          │
+│     └─ Load session + messages                          │
+│                                                         │
+│  3. Write to KV for next request                        │
+│     └─ TTL: 5 minutes                                   │
+│                                                         │
+│  4. Update D1 asynchronously                            │
+│     └─ Ensure persistence                               │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### KV Cache Schema
+
+```
+Key: session:${sessionId}
+Value: {
+  id: string,
+  tenant_id: string,
+  model: string,
+  messages: Message[],
+  metadata: Record<string, unknown>,
+  updated_at: number
+}
+TTL: 300 seconds (5 minutes)
+```
+
+### Cache Invalidation
+
+- **Time-based:** 5 minute TTL ensures fresh data
+- **Write-through:** D1 updates invalidate cache entry
+- **Session reset:** Explicit cache delete on reset
+
+---
+
+## Remaining Technical Considerations
+
+### Post-MVP Items
+The following are deferred to post-MVP:
+
+1. **Custom Domain Support** - Requires DNS validation, TLS automation
+2. **WebSocket Transport** - SSE sufficient for MVP streaming
+3. **Multi-region D1** - Awaiting Cloudflare platform support
+4. **Advanced Model Routing** - ML-based query classification
