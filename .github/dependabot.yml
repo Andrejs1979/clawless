@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm_and_yarn"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # Ignore vitest major versions until Cloudflare Workers vitest pool supports 4.x
+      # @cloudflare/vitest-pool-workers currently only supports vitest 2.x-3.2.x
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
