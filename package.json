@@ -1,0 +1,42 @@
+{
+  "name": "clawless",
+  "version": "0.1.0",
+  "description": "Multi-tenant serverless AI platform built on Cloudflare Workers",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "wrangler d1 execute clawless-db --local --file=./migrations/schema.sql",
+    "db:migrate:remote": "wrangler d1 execute clawless-db --file=./migrations/schema.sql",
+    "db:studio": "wrangler d1 execute clawless-db --local --command"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20241218.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.8",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "wrangler": "^4.10.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

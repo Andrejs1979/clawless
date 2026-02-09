@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.wrangler/
+coverage/
+*.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+.migrations/

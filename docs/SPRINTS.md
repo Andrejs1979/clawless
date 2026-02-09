@@ -8,18 +8,19 @@
 
 ## Sprint Overview
 
-| Sprint | Duration | Focus | Deliverables |
-|--------|----------|-------|--------------|
-| **Sprint 0** | Week 1 | Foundation & Setup | Project structure, tooling, database |
-| **Sprint 1** | Week 2 | Core Runtime | LLM integration, sessions, streaming |
-| **Sprint 2** | Week 3 | Tenant Management | Multi-tenancy, API keys, quotas |
-| **Sprint 3** | Week 4 | API Channel | REST API, authentication, rate limiting |
-| **Sprint 4** | Week 5 | WebChat Widget | Embeddable UI, WebSocket/SSE |
-| **Sprint 5** | Week 6 | Polish & Launch | Testing, docs, deployment, monitoring |
+| Sprint       | Duration | Focus              | Deliverables                            |
+| ------------ | -------- | ------------------ | --------------------------------------- |
+| **Sprint 0** | Week 1   | Foundation & Setup | Project structure, tooling, database    |
+| **Sprint 1** | Week 2   | Core Runtime       | LLM integration, sessions, streaming    |
+| **Sprint 2** | Week 3   | Tenant Management  | Multi-tenancy, API keys, quotas         |
+| **Sprint 3** | Week 4   | API Channel        | REST API, authentication, rate limiting |
+| **Sprint 4** | Week 5   | WebChat Widget     | Embeddable UI, WebSocket/SSE            |
+| **Sprint 5** | Week 6   | Polish & Launch    | Testing, docs, deployment, monitoring   |
 
 ---
 
 ## Sprint 0: Foundation & Setup
+
 **Duration:** Week 1 (5 days)
 **Status:** In Progress
 **Goal:** Set up development environment and core infrastructure
@@ -27,6 +28,7 @@
 ### Days 1-2: Project Structure & Tooling
 
 **Tasks:**
+
 - [x] Create planning documents (PRD, Architecture, Epics)
 - [x] Finalize architecture decisions
 - [ ] Initialize TypeScript project
@@ -46,6 +48,7 @@
   ```
 
 **Deliverables:**
+
 - Monorepo with TypeScript config
 - ESLint + Prettier configured
 - Git hooks (husky + lint-staged)
@@ -54,6 +57,7 @@
 ### Days 3-4: Cloudflare Workers & D1 Setup
 
 **Tasks:**
+
 - [ ] Install and configure Wrangler CLI
 - [ ] Create Cloudflare Workers project
 - [ ] Set up D1 database (local + remote)
@@ -69,6 +73,7 @@
 - [ ] Create base Wrangler config
 
 **Deliverables:**
+
 - Working Wrangler setup
 - D1 database with migrations
 - Local development environment
@@ -77,6 +82,7 @@
 ### Day 5: Core Types & Utilities
 
 **Tasks:**
+
 - [ ] Define core TypeScript types:
   - `Tenant`, `ApiKey`, `Session`, `Message`
   - `LLMProvider`, `LLMRequest`, `LLMResponse`
@@ -91,11 +97,13 @@
 - [ ] Write first test (placeholder)
 
 **Deliverables:**
+
 - Core type definitions
 - Utility library
 - Test framework configured
 
 ### Sprint 0 Definition of Done
+
 - [x] All planning documents complete
 - [ ] Project builds locally
 - [ ] Tests can run
@@ -105,12 +113,14 @@
 ---
 
 ## Sprint 1: Core Runtime
+
 **Duration:** Week 2 (5 days)
 **Goal:** Build AI assistant runtime with LLM integration and session management
 
 ### Day 1: LLM Client Interface
 
 **Tasks:**
+
 - [ ] Design `LLMClient` interface
 - [ ] Implement Workers AI client
   - Text generation via `@cf/meta/llama-3.1-8b-instruct-fp8-fast`
@@ -124,6 +134,7 @@
 - [ ] Write tests for LLM clients
 
 **Deliverables:**
+
 - `LLMClient` interface
 - Workers AI implementation
 - Anthropic implementation (stub/optional)
@@ -132,6 +143,7 @@
 ### Day 2: Smart Model Routing
 
 **Tasks:**
+
 - [ ] Implement query classifier
   - Simple vs complex detection
   - Code detection
@@ -144,6 +156,7 @@
 - [ ] Test routing decisions
 
 **Deliverables:**
+
 - `selectModel()` function
 - Routing tests
 - Fallback logic
@@ -151,6 +164,7 @@
 ### Day 3: Session Management
 
 **Tasks:**
+
 - [ ] Implement session CRUD
   - Create session with context
   - Load session with history
@@ -164,6 +178,7 @@
 - [ ] Session reset functionality
 
 **Deliverables:**
+
 - `SessionManager` class
 - KV + D1 hybrid storage
 - Session tests
@@ -171,6 +186,7 @@
 ### Day 4: Streaming Responses
 
 **Tasks:**
+
 - [ ] Implement SSE streaming
   - Transform LLM chunks to SSE format
   - Handle connection drops
@@ -183,6 +199,7 @@
 - [ ] Stream tests
 
 **Deliverables:**
+
 - SSE streaming implementation
 - Response accumulator
 - Stream tests
@@ -190,6 +207,7 @@
 ### Day 5: Tool Execution Framework
 
 **Tasks:**
+
 - [ ] Design tool execution interface
 - [ ] Implement built-in tools:
   - `sessions_list` - List active sessions
@@ -199,12 +217,14 @@
 - [ ] Create tool registry
 
 **Deliverables:**
+
 - Tool framework
 - 2 built-in tools
 - Tool permission checks
 - Tool tests
 
 ### Sprint 1 Definition of Done
+
 - [ ] Can create session
 - [ ] Can send message and receive streaming response
 - [ ] Workers AI integration working
@@ -215,12 +235,14 @@
 ---
 
 ## Sprint 2: Tenant Management
+
 **Duration:** Week 3 (5 days)
 **Goal:** Multi-tenancy with isolation, authentication, and per-tenant configuration
 
 ### Day 1: Tenant CRUD
 
 **Tasks:**
+
 - [ ] Implement tenant creation API
   - Generate unique tenant ID
   - Apply default settings
@@ -234,6 +256,7 @@
 - [ ] Tenant tests
 
 **Deliverables:**
+
 - `TenantManager` class
 - Tenant CRUD endpoints (internal)
 - Tenant tests
@@ -241,6 +264,7 @@
 ### Day 2: API Key Management
 
 **Tasks:**
+
 - [ ] API key generation (secure random)
 - [ ] API key hashing (SHA-256)
 - [ ] API key validation middleware
@@ -250,6 +274,7 @@
 - [ ] API key tests
 
 **Deliverables:**
+
 - `ApiKeyManager` class
 - Auth middleware
 - API key tests
@@ -257,6 +282,7 @@
 ### Day 3: Usage Quotas
 
 **Tasks:**
+
 - [ ] Quota configuration per tenant
   - Messages per month
   - Tokens per month
@@ -270,6 +296,7 @@
 - [ ] Quota tests
 
 **Deliverables:**
+
 - `QuotaManager` class
 - Quota middleware
 - Usage tracking
@@ -278,6 +305,7 @@
 ### Day 4: Tenant Isolation
 
 **Tasks:**
+
 - [ ] Row-level security implementation
   - All queries filter by tenant_id
   - Validate tenant context on every request
@@ -287,6 +315,7 @@
 - [ ] Security audit
 
 **Deliverables:**
+
 - Tenant context system
 - Row-level security
 - Isolation tests
@@ -295,6 +324,7 @@
 ### Day 5: Admin APIs
 
 **Tasks:**
+
 - [ ] Create admin API endpoints:
   - `POST /admin/tenants` - Create tenant
   - `GET /admin/tenants/:id` - Get tenant
@@ -305,11 +335,13 @@
 - [ ] Admin API tests
 
 **Deliverables:**
+
 - Admin API endpoints
 - Admin auth
 - Admin tests
 
 ### Sprint 2 Definition of Done
+
 - [ ] Can create/manage tenants
 - [ ] API key authentication working
 - [ ] Quotas enforced
@@ -320,12 +352,14 @@
 ---
 
 ## Sprint 3: API Channel
+
 **Duration:** Week 4 (5 days)
 **Goal:** REST API with authentication, rate limiting, and error handling
 
 ### Day 1: API Gateway Worker
 
 **Tasks:**
+
 - [ ] Create API Gateway Worker
 - [ ] Request routing:
   - `POST /v1/chat/completions`
@@ -339,6 +373,7 @@
 - [ ] Gateway tests
 
 **Deliverables:**
+
 - API Gateway Worker
 - Route handlers
 - Validation schemas
@@ -347,6 +382,7 @@
 ### Day 2: Authentication & Authorization
 
 **Tasks:**
+
 - [ ] Bearer token middleware
 - [ ] API key validation
 - [ ] Tenant context loading
@@ -358,6 +394,7 @@
 - [ ] Auth tests
 
 **Deliverables:**
+
 - Auth middleware
 - Rate limiter
 - Auth tests
@@ -365,6 +402,7 @@
 ### Day 3: Chat Completions Endpoint
 
 **Tasks:**
+
 - [ ] Implement `POST /v1/chat/completions`
 - [ ] Support both streaming and non-streaming
 - [ ] Message format validation
@@ -373,6 +411,7 @@
 - [ ] Chat tests
 
 **Deliverables:**
+
 - Chat completions endpoint
 - Streaming support
 - Chat tests
@@ -380,6 +419,7 @@
 ### Day 4: Session Endpoints
 
 **Tasks:**
+
 - [ ] `GET /v1/sessions` - List sessions (paginated)
 - [ ] `POST /v1/sessions` - Create session
 - [ ] `GET /v1/sessions/:id` - Get session details
@@ -388,6 +428,7 @@
 - [ ] Session tests
 
 **Deliverables:**
+
 - Session endpoints
 - Pagination
 - Session tests
@@ -395,6 +436,7 @@
 ### Day 5: Error Handling & Documentation
 
 **Tasks:**
+
 - [ ] Standardized error responses
   - ValidationError (400)
   - AuthenticationError (401)
@@ -407,12 +449,14 @@
 - [ ] API examples
 
 **Deliverables:**
+
 - Error handling system
 - Error documentation
 - OpenAPI spec
 - API examples
 
 ### Sprint 3 Definition of Done
+
 - [ ] All REST endpoints working
 - [ ] Authentication working
 - [ ] Rate limiting active
@@ -423,12 +467,14 @@
 ---
 
 ## Sprint 4: WebChat Widget
+
 **Duration:** Week 5 (5 days)
 **Goal:** Embeddable chat widget for tenant websites
 
 ### Day 1: Widget Architecture
 
 **Tasks:**
+
 - [ ] Design widget architecture
   - Vanilla JS (no framework dependencies)
   - Embed via `<script>` tag
@@ -439,6 +485,7 @@
 - [ ] Widget skeleton
 
 **Deliverables:**
+
 - Widget project structure
 - Build system
 - Widget skeleton
@@ -447,6 +494,7 @@
 ### Day 2: Chat Interface
 
 **Tasks:**
+
 - [ ] Chat UI components:
   - Message list (user + assistant)
   - Message input (textarea, auto-resize)
@@ -458,6 +506,7 @@
 - [ ] Accessibility (ARIA labels, keyboard nav)
 
 **Deliverables:**
+
 - Chat UI
 - Message components
 - Responsive styles
@@ -465,6 +514,7 @@
 ### Day 3: API Integration
 
 **Tasks:**
+
 - [ ] Connect to REST API
 - [ ] Handle API keys (tenant provides)
 - [ ] Implement streaming (SSE)
@@ -473,6 +523,7 @@
 - [ ] Message queuing (offline support)
 
 **Deliverables:**
+
 - API client in widget
 - Streaming support
 - Error handling
@@ -480,6 +531,7 @@
 ### Day 4: Customization & Branding
 
 **Tasks:**
+
 - [ ] Widget configuration:
   - Colors (primary, background, text)
   - Position (bottom-right, bottom-left)
@@ -491,6 +543,7 @@
 - [ ] Logo/icon upload
 
 **Deliverables:**
+
 - Configuration system
 - Theme options
 - Branding docs
@@ -498,6 +551,7 @@
 ### Day 5: Deployment & Integration
 
 **Tasks:**
+
 - [ ] Create widget serving Worker
 - [ ] CDN deployment
 - [ ] Versioning strategy
@@ -506,12 +560,14 @@
 - [ ] Widget tests
 
 **Deliverables:**
+
 - Deployed widget
 - Integration docs
 - Demo page
 - Widget tests
 
 ### Sprint 4 Definition of Done
+
 - [ ] Widget embeddable via script tag
 - [ ] Chat UI functional
 - [ ] Streaming responses working
@@ -522,12 +578,14 @@
 ---
 
 ## Sprint 5: Polish & Launch
+
 **Duration:** Week 6 (5 days)
 **Goal:** Testing, monitoring, documentation, and deployment
 
 ### Day 1: Testing & Quality
 
 **Tasks:**
+
 - [ ] End-to-end tests
 - [ ] Integration tests
 - [ ] Load testing (simulate concurrent users)
@@ -536,6 +594,7 @@
 - [ ] Performance optimization
 
 **Deliverables:**
+
 - Test suite
 - Load test results
 - Security audit report
@@ -544,6 +603,7 @@
 ### Day 2: Observability
 
 **Tasks:**
+
 - [ ] Request logging implementation
   - Log all API calls
   - Correlation IDs
@@ -558,6 +618,7 @@
 - [ ] Cloudflare Analytics integration
 
 **Deliverables:**
+
 - Logging system
 - Metrics dashboard
 - Error tracking
@@ -565,6 +626,7 @@
 ### Day 3: Documentation
 
 **Tasks:**
+
 - [ ] Complete README
 - [ ] API documentation
 - [ ] Deployment guide
@@ -573,6 +635,7 @@
 - [ ] Contributing guidelines
 
 **Deliverables:**
+
 - Complete documentation
 - API reference
 - Deployment guide
@@ -580,6 +643,7 @@
 ### Day 4: Deployment
 
 **Tasks:**
+
 - [ ] Production D1 database setup
 - [ ] Production KV namespace
 - [ ] Production Workers deployment
@@ -589,6 +653,7 @@
 - [ ] Deployment runbook
 
 **Deliverables:**
+
 - Production deployment
 - Deployment docs
 - Runbook
@@ -596,6 +661,7 @@
 ### Day 5: Launch Preparation
 
 **Tasks:**
+
 - [ ] Pre-launch checklist
 - [ ] Smoke tests
 - [ ] Rollback plan
@@ -604,11 +670,13 @@
 - [ ] Launch announcement
 
 **Deliverables:**
+
 - Launch checklist
 - Beta tenant onboarded
 - Monitoring active
 
 ### Sprint 5 Definition of Done
+
 - [ ] All tests passing
 - [ ] Documentation complete
 - [ ] Deployed to production
@@ -621,18 +689,21 @@
 ## Post-MVP Roadmap
 
 ### Phase 2: Features (Weeks 7-10)
+
 - Webhook notifications
 - Advanced tool marketplace
 - Admin dashboard UI
 - Custom domains support
 
 ### Phase 3: Scale (Weeks 11-14)
+
 - Multi-region deployment
 - Caching optimization
 - Database sharding strategy
 - Advanced monitoring
 
 ### Phase 4: Ecosystem (Weeks 15+)
+
 - Channel connectors (Slack, Discord)
 - Voice support (Twilio)
 - RAG capabilities
@@ -643,19 +714,23 @@
 ## Sprint Ceremonies
 
 ### Daily Standup
+
 - **Time:** 15 minutes
 - **Format:** Async (written) or sync (video)
 - **What:** Yesterday, Today, Blockers
 
 ### Sprint Planning
+
 - **Time:** 1 hour (start of sprint)
 - **What:** Review backlog, estimate tasks, commit to sprint
 
 ### Sprint Review
+
 - **Time:** 30 minutes (end of sprint)
 - **What:** Demo completed work, gather feedback
 
 ### Retrospective
+
 - **Time:** 30 minutes (end of sprint)
 - **What:** What went well, what didn't, improvements
 
@@ -664,12 +739,14 @@
 ## Metrics & KPIs
 
 ### Sprint Health
+
 - Velocity (story points completed)
 - Sprint goal achievement
 - Bug count
 - Test coverage
 
 ### Product Metrics
+
 - Active tenants
 - Messages processed
 - API success rate
@@ -680,19 +757,20 @@
 
 ## Risk Management
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Workers AI quality insufficient | High | Medium | Hybrid routing to premium LLMs |
-| Cloudflare limits reached | Medium | Low | Design for horizontal scaling |
-| Multi-tenant data leakage | Critical | Low | Extensive testing + security audit |
-| Slow time-to-first-token | High | Medium | KV caching + model warm-up |
-| Complex deployment | Medium | Low | Comprehensive documentation |
+| Risk                            | Impact   | Probability | Mitigation                         |
+| ------------------------------- | -------- | ----------- | ---------------------------------- |
+| Workers AI quality insufficient | High     | Medium      | Hybrid routing to premium LLMs     |
+| Cloudflare limits reached       | Medium   | Low         | Design for horizontal scaling      |
+| Multi-tenant data leakage       | Critical | Low         | Extensive testing + security audit |
+| Slow time-to-first-token        | High     | Medium      | KV caching + model warm-up         |
+| Complex deployment              | Medium   | Low         | Comprehensive documentation        |
 
 ---
 
 ## Dependencies
 
 ### External
+
 - Cloudflare Workers account
 - Cloudflare D1 database
 - Anthropic API account (optional/fallback)
@@ -700,6 +778,7 @@
 - Domain name (custom)
 
 ### Internal
+
 - Planning documents (complete)
 - Architecture decisions (complete)
 - Developer availability

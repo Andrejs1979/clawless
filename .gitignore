@@ -18,3 +18,15 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Testing
+coverage/
+*.lcov
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+.cache/

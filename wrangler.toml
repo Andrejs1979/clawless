@@ -1,0 +1,59 @@
+name = "clawless"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Account ID (set via environment variable or replace with your account ID)
+# account_id = ""
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "clawless-db"
+database_id = "local"
+
+# KV Namespace (for caching)
+[[kv_namespaces]]
+binding = "CACHE"
+id = "local"
+
+# R2 Bucket (for file storage)
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "clawless-storage"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "development"
+
+# Secrets (use `wrangler secret put <NAME>`)
+# - ANTHROPIC_API_KEY
+# - OPENAI_API_KEY
+
+# Staging environment
+[env.staging]
+name = "clawless-staging"
+vars = { ENVIRONMENT = "staging" }
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "clawless-db-staging"
+database_id = ""  # Set after creating staging DB
+
+# Production environment
+[env.production]
+name = "clawless-api"
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "clawless-db"
+database_id = ""  # Set after creating production DB
+
+# Build configuration
+[build]
+command = "npm run build"
+
+# Observability
+[observability]
+enabled = true
